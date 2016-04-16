@@ -3,8 +3,7 @@
 #
 #
 			.data
-menu:   	.asciiz		
-					"\n\n-  Lista Ordenada  -\n-       MENU       -
+menu:   	.asciiz		"\n\n-  Lista Ordenada  -\n-       MENU       -
 					\n1 - Incluir Elemento
 					\n2 - Excluir Elemento por indice
 					\n3 - Excluir Elemento por valor
@@ -25,9 +24,19 @@ txt_total_inc: 	.asciiz		"\n\nTotal de inclusoes: "
 txt_total_exc:	.asciiz		"\nTotal de exclusoes: "
 txt_lista: 		.asciiz		"Lista: "
 txt_espaco: 	.asciiz		" "
-txt_posicao:		.asciiz     "Posicao Inserida: "
+txt_posicao:	.asciiz     "Posicao Inserida: "
 txt_vremovido:	.asciiz		"Valor Removido: "
 txt_iremovido:	.asciiz		"Indice Removido: "
 		
 		.text
+		
 main: 
+		add $t9, $zero, $ra
+		add $s0, $zero, $zero  # $s0 é o registrador apontador para o início da lista
+		add $s1, $zero, $zero  # $s1 contador de inserções
+		add $s2, $zero, $zero  # $s2 contador de exclusõesz
+	
+mostra_menu:
+		li	$v0, 4			
+		la	$a0, menu
+		syscall
