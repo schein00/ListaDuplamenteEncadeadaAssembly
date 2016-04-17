@@ -88,9 +88,9 @@ op_insere:
 		syscall		
 		li	$v0, 5			
 		syscall
-		add	$a1, $zero, $v0		# carrega valor lido em $v1		
-		add $a0, $zero, $s0		# carrega inicio da lista em $v0
-		jal  insere
+		add	$a1, $zero, $v0		# carrega valor lido em $a1		
+		add $a0, $zero, $s0		# carrega inicio da lista em $a0
+		jal  insert
 		addi $s2, $s2, 1		# incrementa contador de inserções
 		add  $t0, $zero, $v0 	
 		li	$v0, 4			
@@ -129,13 +129,50 @@ op_mostra:
 		syscall		
 		j   mostra_menu
 
+		
+
+		
+
+		
 ##################################################
 # Insere um item na lista duplamente encadeada	 #		
 ##################################################
 insert: 
+		add $t0, $zero, $a0					# copia posição do inicio da lista
+		add $t1, $zero, $a1 				# copia valor a ser inserido
+		add $t6, $zero, $zero 				# inicia contador indice
+		bne $t0, $zero, insert_primeiro 	#quando a lista for NULL, sera chamada a funcao primeiro_insert
+		addi $a2, $a0, 4 
+		slt $t0, $a1 , $a2					#se valor a ser inserido for menor que o valor do primeiro nodo
+		bne $t0, $zero, insert_incio		#quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
+											
+		li $v0, 4
+		la $a0, txt_iremovido
+		syscall									
 		j mostra_menu
 
+		
+		
+insert_primeiro: 
+		li	$a0, 12 			 # quantidade de bytes de memória a ser alocado
+		li	$v0, 9
+		syscall	
+		sw   $t1, 4($v0)     	# coloca valor na memoria
+		sw   $zero, 0 ($v0)  	# faz ponteiro apontar para NULL
+		add  $s0, $zero, $v0 	# faz inicio apontar para primeiro elemento
+		addi $v0, $zero, 0 	  	# coloca 0 em $v0
+		j mostra_menu			# depois de inserir o primeiro elemento retorna da chamada
 
+insert_incio:
+		#li $a0, 8
+		#li	$v0, 9
+		#syscall
+		li $v0, 4
+		la $a0, txt_sair
+		syscall
+		j mostra_menu
+		
+		
 ##################################################
 # Exclui um item na lista duplamente encadeada	 #
 #	por valor 									 #		
