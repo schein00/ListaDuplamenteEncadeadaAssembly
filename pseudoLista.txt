@@ -1,0 +1,53 @@
+inser (lista, valor){
+	
+	se (lista vazia)
+
+		cria nodo;
+		grava nodo na memoria;
+
+		insere valor no nodo;
+
+		seta anteror e proximo como 0;
+
+		define o nodo como primeiro da lista;
+		finaliza funcao;
+
+	se (o valor a ser inserido for menor que o menor valor presente na lista)
+
+		cria o nodo;
+
+		grava nodo na memoria;
+		insere o valor no nodo;
+
+		seta o anterior como 0;
+
+		proximo do novo nodo indica o primeiro elemento da lista;
+
+		anterior do primeiro da lista indica o novo nodo;
+
+		comeco da lista indica o novo nodo;
+		finaliza a funcao;
+	
+
+se (o valor a ser inserido e maior que o maior valor presente na lista)
+
+}
+		
+		cia o nodo;
+		grava na memoria;
+		insere o valor no nodo;
+		seta o proximo como 0;
+		seta o anterior como o ultim elemento da lista;
+		seta o proximo do ultimo elemento da lista para o novo nodo;
+		finaliza a funcao;
+	senao 
+		loop na lista ate o valor do elemento for menor quer o valor inserido e o prixmo valor for maior ou igual ao valor inserido
+		cria nodo;
+		grava na memoria;
+		insere valor no novo nodo;
+		seta o anterior como o nodo com valor menor;
+		seta como o proximo o nodo com valor maior;
+		indica como o proximo do nodo com valor menor o novo nodo;
+		indica como o anterior do nodo com valor maior o novo nodo;
+		finaliza a funcao;
+fim insert;
