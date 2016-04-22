@@ -1,4 +1,4 @@
-inser (lista, valor){
+insert (lista, valor){
 	
 	se (lista vazia)
 
@@ -51,3 +51,67 @@ se (o valor a ser inserido e maior que o maior valor presente na lista)
 		indica como o anterior do nodo com valor maior o novo nodo;
 		finaliza a funcao;
 fim insert;
+
+delete_indice (lista, indice)
+	se (lista vazia)
+		mostra mensagem de erro;
+		finaliza a funcao;
+	loop ate chegar no indice indicado
+		se (fim da lista)
+			mostra mensagem de erro;
+			finaliza a funcao;
+
+	se (for o primeiro nodo)
+		carrega o proximo;
+		proximo.anterior indica 0;
+		lista indica proximo;
+		mostra mensagem;
+		finaliza funcao;	
+	se (nao for o indice do primeiro ou do ultimo nodo)
+		carrega o proximo nodo;
+		carrega o nodo anterior;
+		indica anterior.proximo para o proximo;
+		indica proximo.anterior 
+		exclui nodo;
+		mostra mensagem;
+		finaliza funcao;
+
+	se (for o ultimo nodo)
+		carrega o anterior;
+		anterior.proximo indica 0;
+		libera o nodo;
+		mostra mensagem;
+		finaliza funcao;
+fim delete_indice;
+
+
+delete_valor(lista, valor)
+	
+	se (lista vazia)
+		mostra mensagem de erro;
+		finaliza funcao;
+	
+	se (valor for o primeiro da lista)
+		carrega o proximo;
+		proximo.anterior indica 0;
+		lista indica proximo;
+		mostra mensagem;
+		finaliza funcao;	
+	se (nao for o valor do primeiro ou do ultimo nodo)
+		carrega o proximo nodo;
+		carrega o nodo anterior;
+		indica anterior.proximo para o proximo;
+		indica proximo.anterior 
+		exclui nodo;
+		mostra mensagem;
+		finaliza funcao;
+
+	se (for o valor do ultimo nodo)
+		carrega o anterior;
+		anterior.proximo indica 0;
+		libera o nodo;
+		mostra mensagem;
+		finaliza funcao;
+fim delete_valor;
+
+
