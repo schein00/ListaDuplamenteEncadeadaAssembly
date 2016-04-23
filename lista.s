@@ -140,12 +140,25 @@ op_mostra:
 insert: 
 		add $t0, $zero, $a0					# copia posição do inicio da lista
 		add $t1, $zero, $a1 				# copia valor a ser inserido
+
+		# sempre que a funcao insert é executada é criado um nodo, mesmo que nao seja usado por algum erro
+		li	$a0, 12			 	# quantidade de bytes de memória a ser alocado
+		li	$v0, 9
+		syscall	
+		sw $t1, 4($v0)     		# coloca valor na memoria
+		sw $zero, 0($v0)  		# indica o anterior como NULL
+		sw $zero, 8($v0)		# indica o proximo como NULL
+		
+		
+		bne $t0, $zero, insert_primeiro		# caso a lista estaja vazia, desvia para a funcao que insere o primeiro elemento
+		
+		li $t3, 4($t0)						# copia para t3 o valo do primiero elemento da lista
+		slt $t5, $t1 , $t3					# se valor a ser inserido for menor que o valor do primeiro nodo
+		bne $t5, $zero, insert_incio		# quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
+		
+		
+		
 		add $t6, $zero, $zero 				# inicia contador indice
-		bne $t0, $zero, insert_primeiro 	#quando a lista for NULL, sera chamada a funcao primeiro_insert
-		addi $a2, $a0, 4 
-		slt $t0, $a1 , $a2					#se valor a ser inserido for menor que o valor do primeiro nodo
-		bne $t0, $zero, insert_incio		#quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
-											
 		li $v0, 4
 		la $a0, txt_iremovido
 		syscall									
@@ -153,23 +166,18 @@ insert:
 
 		
 		
+		
 insert_primeiro: 
-		li	$a0, 12 			 # quantidade de bytes de memória a ser alocado
-		li	$v0, 9
-		syscall	
-		sw   $t1, 4($v0)     	# coloca valor na memoria
-		sw   $zero, 0 ($v0)  	# faz ponteiro apontar para NULL
 		add  $s0, $zero, $v0 	# faz inicio apontar para primeiro elemento
 		addi $v0, $zero, 0 	  	# coloca 0 em $v0
 		j mostra_menu			# depois de inserir o primeiro elemento retorna da chamada
 
 insert_incio:
-		#li $a0, 8
-		#li	$v0, 9
-		#syscall
-		li $v0, 4
-		la $a0, txt_sair
-		syscall
+		lw $t4, $t0
+		
+		sw $v0, 0($t4)
+		sw $t4, 4($v0)
+		sw $v0, $s1
 		j mostra_menu
 		
 		
