@@ -191,7 +191,25 @@ excluir_v:
 # Mosta a lista duplamente encadeada ordenada	 #		
 ##################################################
 mostrar_lista:
-		j mostra_menu
+		add $t0, $zero, $a0	# copia posição do inicio da lista
+		bne $t0, $zero, segue_mostra
+		addi $v0, $zero, -1		  # retorna -1
+		jr  $ra
+		
+		
+laco_mostra:
+		lw $a0, 4 ($t0)
+		li $v0, 1
+		syscall
+		
+		la $a0, txt_espaco
+		li $v0, 4
+		syscall		
+		
+		lw $t0, 0 ($t0)
+		bne $t0, $zero, laco_mostra
+		jr $ra
+		
 
 ##################################################
 # Nostra totais da lista duplamente encadeada	 #		
