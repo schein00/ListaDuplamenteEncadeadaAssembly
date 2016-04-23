@@ -28,7 +28,8 @@ txt_espaco: 	.asciiz		" "
 txt_posicao:	.asciiz     	"Posicao Inserida: "
 txt_vremovido:	.asciiz		"Valor Removido: "
 txt_iremovido:	.asciiz		"Indice Removido: "
-		
+marcador:		.asciiz		"entro"	
+
 		.text
 	
 main:	
@@ -129,9 +130,6 @@ op_mostra:
 		syscall		
 		j   mostra_menu
 
-		
-
-		
 
 		
 ##################################################
@@ -149,37 +147,63 @@ insert:
 		sw $zero, 0($v0)  		# indica o anterior como NULL
 		sw $zero, 8($v0)		# indica o proximo como NULL
 		
+		beq $t0, $zero, insere_primeiro_elemento		
+		# caso a lista estaja vazia, desvia para a funcao que insere o primeiro elemento
 		
-		bne $t0, $zero, insert_primeiro		# caso a lista estaja vazia, desvia para a funcao que insere o primeiro elemento
+		lw $t4, $t0							# carrega em t4 o primeiro elemento da lista
 		
-		li $t3, 4($t0)						# copia para t3 o valo do primiero elemento da lista
+		lw $t3, 4($t0) 						# copia para t3 o valo do primiero elemento da lista
 		slt $t5, $t1 , $t3					# se valor a ser inserido for menor que o valor do primeiro nodo
-		bne $t5, $zero, insert_incio		# quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
+		bne $t5, $zero, insere_no_incio		# quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
 		
+		addi $t3, $zero, 1
+		bne $t5, $t3, loop_insere 		# se nao for menor que o primeiro sera inserido no meio ou no final da lista
 		
-		
-		add $t6, $zero, $zero 				# inicia contador indice
-		li $v0, 4
-		la $a0, txt_iremovido
-		syscall									
-		j mostra_menu
+		jr $ra
 
 		
+insere_primeiro_elemento: 
 		
-		
-insert_primeiro: 
 		add  $s0, $zero, $v0 	# faz inicio apontar para primeiro elemento
 		addi $v0, $zero, 0 	  	# coloca 0 em $v0
-		j mostra_menu			# depois de inserir o primeiro elemento retorna da chamada
+		add $s4, $zero, $zero	# inicia contador de elementos (indices)
+		jr $ra 					# depois de inserir o primeiro elemento retorna da chamada
 
-insert_incio:
-		lw $t4, $t0
+insere_no_incio:
+		
 		
 		sw $v0, 0($t4)
 		sw $t4, 4($v0)
 		sw $v0, $s1
 		j mostra_menu
 		
+loop_insere:  			# loop que percore a lista ate encontrar a posicao onde sera inserido o novo nodo
+		lw $t4, 8($t4)
+		
+		beq $t4, $zero, insere_fim
+
+		lw $t3, 4($t4)
+		slt $t5, $t1, $t3
+		bne $t5, $zero, insere_meio
+		beq $t5, $zero, loop_insere
+		
+		j mostra_menu
+		
+insere_meio:
+		lw $t5, 0($t4)
+		sw $t5, 0($v0)
+		sw $v0, 8($t5)
+		sw $v0, 0($t4)
+		sw $t4, 8($v0)
+		addi $s4, $s4, 1
+		jr $ra		
+		
+
+insere_fim:
+		sw $v0, 8($t4)
+		sw $t4, 0($v0)
+		addi $s4, $s4, 1
+		jr $ra
 		
 ##################################################
 # Exclui um item na lista duplamente encadeada	 #
@@ -195,6 +219,13 @@ excluir_i:
 excluir_v:
 		j mostra_menu
 
+		
+##################################################
+# Nostra totais da lista duplamente encadeada	 #		
+##################################################
+mostrar_totais:
+		j mostra_menu
+		
 ##################################################
 # Mosta a lista duplamente encadeada ordenada	 #		
 ##################################################
@@ -219,8 +250,3 @@ laco_mostra:
 		jr $ra
 		
 
-##################################################
-# Nostra totais da lista duplamente encadeada	 #		
-##################################################
-mostrar_totais:
-		j mostra_menu
