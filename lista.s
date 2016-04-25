@@ -52,7 +52,7 @@ compara_e_desvia:
 		addi $t1, $zero, 3
 		beq  $t0, $t1, op_excluiv		
 		addi $t1, $zero, 4
-		beq  $t0, $t1, op_mostra
+		beq  $t0, $t1, op_mostrar
 		addi $t1, $zero, 5
 		beq  $t0, $t1, op_sair
 		addi $t1, $zero, 6
@@ -96,12 +96,42 @@ op_excluii:
 		j mostra_menu		
 op_excluiv: 
 		j mostra_menu		
-op_mostra:
+op_mostrar:
 		add $a0, $zero, $s0		# carrega inicio da lista em $v0
-		j mostrar_lista
+		jal mostrar_lista
 		addi $t0, $zero, -1
 		beq  $v0, $t0, imprime_lista_vazia		
-		j   mostra_menu
+		jal   mostra_menu
+
+##################################################
+# Mosta a lista duplamente encadeada ordenada	 #		
+##################################################		
+mostrar_lista:
+		add $t0, $zero, $a0	# copia posição do inicio da lista
+		bne $t0, $zero, segue_mostra
+		addi $v0, $zero, -1		  # retorna -1
+		jr  $ra
+		
+segue_mostra:
+		la	$a0, txt_lista
+		syscall
+		
+laco_mostra:
+		lw $a0, 4 ($t0)
+		li $v0, 1
+		syscall
+		
+		la $a0, txt_espaco
+		li $v0, 4
+		syscall		
+		
+		lw $t0, 0 ($t0)
+		bne $t0, $zero, laco_mostra
+		jal mostra_menu
+###################################
+# fim funcao mostrar lista
+		
+		
 imprime_indice_nao_encontrado:		
 		la	 $a0, txt_ind_inex
 		li   $v0, 4
@@ -197,26 +227,5 @@ excluir_v:
 mostrar_totais:
 		j mostra_menu
 		
-##################################################
-# Mosta a lista duplamente encadeada ordenada	 #		
-##################################################
-mostrar_lista:
-		add $t0, $zero, $a0	# copia posição do inicio da lista
-		bne $t0, $zero, segue_mostra
-		addi $v0, $zero, -1		  # retorna -1
-		jr  $ra
-		
-laco_mostra:
-		lw $a0, 4 ($t0)
-		li $v0, 1
-		syscall
-		
-		la $a0, txt_espaco
-		li $v0, 4
-		syscall		
-		
-		lw $t0, 0 ($t0)
-		bne $t0, $zero, laco_mostra
-		jr $ra
-		
+
 
