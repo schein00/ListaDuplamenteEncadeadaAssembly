@@ -95,7 +95,15 @@ op_insere:
 op_excluii:
 		j mostra_menu		
 op_excluiv: 
-		j mostra_menu		
+		la	$a0, txt_valor
+		syscall		
+		li	$v0, 5	#pq 5?		
+		syscall
+		add $a1,$zero,$a0  #valorpararemover
+		add $a0,$zero,$s0  #inicio da lista
+		bne $s2,$zero,excluir_v	#verificasealistaévazia
+		j mostra_menu
+		
 op_mostrar:
 		add $a0, $zero, $s0		# carrega inicio da lista em $v0
 		jal mostrar_lista
@@ -217,8 +225,82 @@ excluir_i:
 # Exclui um item na lista duplamente encadeada	 #		
 #	por indice									 #
 ##################################################
-excluir_v:
+excluir_v:		
+		lw $t8,4($a0) #valor do primeiro elemento
+		beq $t8,$a1, remove_inicio #verifica se o primeiro elemento é igual ao valor a ser removido
+		add $t9,$t9,$zero #inicia o contador
+		lw $t8,(a0) #passa o inicio da lista
+			jump: slt $t4,$t9,$s2  #inicio do laço se i<total de inserção
+				beq $t4, $zero , exit_lacoR	 #senão fimdelaço
+		  		lw $t5,0($t8) 
+		  		lw $t6, 4($t8)
+		  		lw $t7,8($t8)
+		 		beq $t6,$a1, remover_ele
+		 		lw $t8,($t7)
+		  		addi $t9,$t9,1
+			j jump
 		j mostra_menu
+exit_laco:
+	j mostra_menu
+
+remover_ele:
+ 		beq $t7,$zero,remover_ult
+ 		lw $t3,8($t5)
+ 		lw $t2,0($t7)
+ 		sw $t2,8($t3)
+ 		sw $t3,0($t2)
+ 		sw $zero,($t5)
+ 		sw $zero,($t7)
+ 		addi $t9,$t9,1
+ 		addi $t2,$t2,1 #incrementa 1
+ 		sub $s2,$s2,$t2 #decrementa no contador de inserções
+ 		sw $s2,($s2)  #salva
+
+ 		j mostra_menu
+
+remover_ult:
+		lw $t3,($t5)
+		sw $zero,8($t3)
+		sw $zero,($t5)
+		addi $t9,$t9,1
+		addi $t2,$t2,1 #incrementa 1
+ 		sub $s2,$s2,$t2 #decrementa no contador de inserções
+ 		sw $s2,($s2)  #salva
+		j mostra_menu
+
+
+remove_inicio:
+		lw $t9,8($t8) #endereco do proximo
+		beq $t9,$zero,remove_inicio_1Elemento #verifica se é o unico elemento da lista 
+		jal remove_inicio_nElemento
+
+
+		j mostra_menu
+
+remove_inicio_1Elemento:
+		lw $t8,0($a0) #ponteiro que aponta para o inicio
+		sw $zero,0($t8) #free no left
+		sw $zero,($a0) #atualiza o inicio da lista
+		addi $t2,$t2,1 #incrementa 1
+ 		sub $s2,$s2,$t2 #decrementa no contador de inserções
+ 		sw $s2,($s2)  #salva
+
+ 		j mostra_menu
+
+remove_inicio_nElemento:
+ 		lw $t8, 8($a0) #
+ 		lw $t9, 0($t8) #left do proximo nodo
+ 		sw $a0,($t9) #inicio da lista
+ 		sw $zero,0($t8) #
+ 		sw $zero,8($t8)
+ 		sw $t9,($a0) #
+ 		addi $t2,$t2,1 #incrementa 1
+ 		sub $s2,$s2,$t2 #decrementa no contador de inserções
+ 		sw $s2,($s2)
+
+ 		j mostra_menu
+		
+
 
 		
 ##################################################
