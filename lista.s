@@ -326,15 +326,22 @@ remove_inicio_1Elemento:
  		j mostra_menu
 
 remove_inicio_nElemento:
+		la	$a0, txt_inicioele
+		li   $v0, 4
+		syscall
  		lw $t8, 8($a2) #
  		lw $t9, 0($t8) #left do proximo nodo
- 		sw $a0,($t9) #inicio da lista
- 		sw $zero,0($t8) #
- 		sw $zero,8($t8)
- 		sw $t9,($a2) #
+ 		lw $t3,0($a2)
+ 		sw $t3,($t9)
+ 		li $t8,0 #
+
+ 		lw $t7,8($t8)
+ 		li $t7,0
+ 		##sw $t9,0($s2)
+ 		
  		addi $t2,$t2,1 #incrementa 1
  		sub $s2,$s2,$t2 #decrementa no contador de inserções
- 		sw $s2,($s2)
+ 	
 
  		j mostra_menu
 		
