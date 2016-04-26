@@ -54,7 +54,7 @@ compara_e_desvia:
 		addi $t1, $zero, 4
 		beq  $t0, $t1, op_mostrar
 		addi $t1, $zero, 5
-		beq  $t0, $t1, op_sair
+		beq  $t0, $t1, mostrar_totais
 		addi $t1, $zero, 6
 		beq  $t0, $t1, op_sair		
 imprime_opcao_invalida:		
@@ -121,6 +121,25 @@ op_mostrar:
 		addi $t0, $zero, -1
 		beq  $v0, $t0, imprime_lista_vazia		
 		jal   mostra_menu
+		
+mostrar_totais:
+		la $a0, txt_total_inc
+		li $v0, 4
+		syscall
+		
+		li $v0, 1
+		add $a0, $zero, $s2
+		syscall
+		
+		li $v0, 4
+		la $a0, txt_total_exc
+		syscall
+		
+		li $v0, 1
+		add $a0, $zero, $s1
+		syscall
+		
+		jal mostra_menu
 
 ##################################################
 # Mosta a lista duplamente encadeada ordenada	 #		
