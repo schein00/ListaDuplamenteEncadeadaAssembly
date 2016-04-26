@@ -99,7 +99,7 @@ op_excluii:
 		syscall
 		add $a1,$zero,$v0  #valorpararemover
 		add $a2,$zero,$s0  #inicio da lista
-		sw $s2, ($t9)
+		sw $s2, 0($t9)
 				
 		bne $t9,$zero,excluir_i	#verificasealistaévazia
 		j mostra_menu		
@@ -110,7 +110,7 @@ op_excluiv:
 		syscall
 		add $a1,$zero,$v0  #valorpararemover
 		add $a2,$zero,$s0  #inicio da lista
-		sw $s2, ($t9)
+		sw $s2, 0($t9)
 				
 		bne $t9,$zero,excluir_v	#verificasealistaévazia
 		j mostra_menu
