@@ -253,13 +253,13 @@ excluir_i:
 		addi $t9,$zero,1				
 		beq $t9,$a1,remove_inicio
 		add $t9,$t9,$zero #inicia o contador
-		lw $t8,($a2)
+		lw $t8,0($a2)
 		laco: slt $t4,$t9,$a1
 				beq $t4,$zero,exit_lacoR	 #senão fimdelaço
 		  		lw $t5,0($t8) 
 		  		lw $t6,4($t8)
 		  		lw $t7,8($t8)
-		 		lw $t8,($t7)
+		 		lw $t8,0($t7)
 		  		addi $t9,$t9,1
 			j laco
 		beq $t9,$a1, remover_ele
@@ -285,7 +285,7 @@ excluir_v:
 		  		lw $t6, 4($t8)
 		  		lw $t7,8($t8)
 		 		beq $t6,$a1, remover_ele
-		 		lw $t8,($t7)
+		 		lw $t8,0($t7)
 		  		addi $t9,$t9,1
 			j jump
 		j mostra_menu	
@@ -298,23 +298,23 @@ remover_ele:
  		lw $t2,0($t7)
  		sw $t2,8($t3)
  		sw $t3,0($t2)
- 		sw $zero,($t5)
- 		sw $zero,($t7)
+ 		sw $zero,0($t5)
+ 		sw $zero,0($t7)
  		addi $t9,$t9,1
  		addi $t2,$t2,1 #incrementa 1
  		sub $s2,$s2,$t2 #decrementa no contador de inserções
- 		sw $s2,($s2)  #salva
+ 		sw $s2, 0($s2)  #salva
 
  		j mostra_menu
 
 remover_ult:
-		lw $t3,($t5)
+		lw $t3,0($t5)
 		sw $zero,8($t3)
-		sw $zero,($t5)
+		sw $zero,0($t5)
 		addi $t9,$t9,1
 		addi $t2,$t2,1 #incrementa 1
  		sub $s2,$s2,$t2 #decrementa no contador de inserções
- 		sw $s2,($s2)  #salva
+ 		sw $s2,0($s2)  #salva
 		j mostra_menu
 
 
@@ -351,7 +351,7 @@ remove_inicio_nElemento:
  		lw $t8, 8($a2) #
  		lw $t9, 0($t8) #left do proximo nodo
  		lw $t3,0($a2)
- 		sw $t3,($t9)
+ 		sw $t3,0($t9)
  		li $t8,0 #
 
  		lw $t7,8($t8)
