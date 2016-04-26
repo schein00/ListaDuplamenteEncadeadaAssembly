@@ -150,63 +150,66 @@ imprime_lista_vazia:
 # fim funcao mostrar lista
 
 
-		
 ##################################################
 # Insere um item na lista duplamente encadeada	 #		
-##################################################
-insere_primeiro_elemento: 		
-		add  $s0, $zero, $v0 	# faz inicio apontar para primeiro elemento
-		addi $v0, $zero, 0 	  	# coloca 0 em $v0
-		add $s4, $zero, $zero	# inicia contador de elementos (indices)
-		j mostra_menu 					# depois de inserir o primeiro elemento retorna da chamada
+##################################################	
+insere_primeiro_elemento:		
+		add  $s0, $zero, $t6 						# faz inicio apontar para primeiro elemento
+		addi $v0, $zero, 0 	  						# coloca 0 em $v0
+		jr $ra 										# depois de inserir o primeiro elemento retorna da chamada
+	
 insert: 
-		add $t0, $zero, $a0					# copia posição do inicio da lista
-		add $t1, $zero, $a1 				# copia valor a ser inserido
-		# sempre que a funcao insert é executada é criado um nodo, mesmo que nao seja usado por algum erro
-		li	$a0, 12			 	# quantidade de bytes de memória a ser alocado
+		add $t0, $zero, $a0							# copia posição do inicio da lista
+		add $t1, $zero, $a1 						# copia valor a ser inserido
+													# sempre que a funcao insert é executada é criado um nodo, mesmo que nao seja usado por algum erro
+		li	$a0, 12			 						# quantidade de bytes de memória a ser alocado
 		li	$v0, 9
 		syscall	
-		sw $t1, 4($v0)     		# coloca valor na memoria
-		sw $zero, 0($v0)  		# indica o anterior como NULL
-		sw $zero, 8($v0)		# indica o proximo como NULL		
-		beq $t0, $zero, insere_primeiro_elemento # caso a lista estaja vazia, desvia para a funcao que insere o primeiro elemento
-		lw $t4, $t0							# carrega em t4 o primeiro elemento da lista
-		lw $t3, 4($t0) 						# copia para t3 o valo do primiero elemento da lista
-		slt $t5, $t1 , $t3					# se valor a ser inserido for menor que o valor do primeiro nodo
-		bne $t5, $zero, insere_no_incio		# quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
-		addi $t3, $zero, 1
-		bne $t5, $t3, loop_insere 		# se nao for menor que o primeiro sera inserido no meio ou no final da lista
+		add $t6, $zero, $v0
+		sw $t1, 4($t6)     							# coloca valor na memoria
+		sw $zero, 0($t6)  							# indica o anterior como NULL
+		sw $zero, 8($t6)							# indica o proximo como NULL		
+		bne $t0, $zero, insere_lista 				# caso a lista nao estaja vazia, desvia para a funcao que insere na lista
+		beq $t0, $zero, insere_primeiro_elemento	# caso a lista esteja vazia devia para a funcao insere primeiro elemento
 		jr $ra
-insere_primeiro_elemento: 
-		add  $s0, $zero, $v0 	# faz inicio apontar para primeiro elemento
-		addi $v0, $zero, 0 	  	# coloca 0 em $v0
-		add $s4, $zero, $zero	# inicia contador de elementos (indices)
-		j mostra_menu 					# depois de inserir o primeiro elemento retorna da chamada
+		
+insere_lista:
+ 
+		lw $t3, 4($s0) 								# copia para t3 o valo do primiero elemento da lista
+		slt $t5, $t1 , $t3							# se valor a ser inserido for menor que o valor do primeiro nodo
+		addi $t3, $zero, 1							# define t3 como 1 para teste do desvio condicional
+		bne $t5, $zero, insere_no_incio				# quando o valor sera maior que o primeiro valor, sera inserido no inicio da lista
+		add $t4, $zero, $s0							# t4 sera o reposavel por passar pelos nodos
+		bne $t5, $t3, loop_insere 					# se nao for menor que o primeiro sera inserido no meio ou no final da lista
+		jr $ra
+		
 insere_no_incio:
-		sw $v0, 0($t4)
-		sw $t4, 4($v0)
-		sw $v0, $s1
-		j mostra_menu
-loop_insere:  			# loop que percore a lista ate encontrar a posicao onde sera inserido o novo nodo
+		sw $t6, 0($s0)
+		sw $s0, 8($t6)
+		add $s0, $zero, $t6
+		jr $ra
+
+		
+loop_insere:  										# loop que percore a lista ate encontrar a posicao onde sera inserido o novo nodo
+		add $t8, $zero, $t4
 		lw $t4, 8($t4)
 		beq $t4, $zero, insere_fim
 		lw $t3, 4($t4)
 		slt $t5, $t1, $t3
-		bne $t5, $zero, insere_meio
 		beq $t5, $zero, loop_insere
-		j mostra_menu		
+		bne $t5, $zero, insere_meio
+		jr $ra
+		
 insere_meio:
-		lw $t5, 0($t4)
-		sw $t5, 0($v0)
-		sw $v0, 8($t5)
-		sw $v0, 0($t4)
-		sw $t4, 8($v0)
-		addi $s4, $s4, 1
-		jr $ra				
+		sw $t6, 8($t8)
+		sw $t8, 0($t6)
+		sw $t4, 8($t6)
+		sw $t6, 0($t4)
+		jr $ra	
+		
 insere_fim:
-		sw $v0, 8($t4)
-		sw $t4, 0($v0)
-		addi $s4, $s4, 1
+		sw $t6, 8($t8)
+		sw $t8, 0($t6)
 		jr $ra
 		
 ##################################################
