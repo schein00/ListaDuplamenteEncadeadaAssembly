@@ -194,34 +194,34 @@ insere_lista:
 		bne $t5, $t3, loop_insere 					# se nao for menor que o primeiro sera inserido no meio ou no final da lista
 		jr $ra
 		
-insere_no_incio:
-		sw $t6, 0($s0)
-		sw $s0, 8($t6)
-		add $s0, $zero, $t6
+insere_no_incio:									# quando o valor a ser inserido é menor que o valor do primeiro elemento da lista
+		sw $t6, 0($s0)								# proximo do novo nodo sera o incio da lista
+		sw $s0, 8($t6)								# anterior do inicio da fila aponta para o novo nodo
+		add $s0, $zero, $t6							# ponteiro do comeco da lista aponta para no novo nodo
 		jr $ra
 
 		
 loop_insere:  										# loop que percore a lista ate encontrar a posicao onde sera inserido o novo nodo
 		add $t8, $zero, $t4
-		lw $t4, 8($t4)
-		beq $t4, $zero, insere_fim
+		lw $t4, 8($t4)								# salva qual é o nodo anterior
+		beq $t4, $zero, insere_fim					# se o t4 chegar a 0 insere no final da lista
 		lw $t3, 4($t4)
-		slt $t5, $t1, $t3
-		beq $t5, $zero, loop_insere
-		bne $t5, $zero, insere_meio
+		slt $t5, $t1, $t3							# t5 recebe 1 se o valor a ser inserido é menor que o do nodo em que esta a interacao 
+		beq $t5, $zero, loop_insere					# se nao for menor, faz mais uma interada
+		bne $t5, $zero, insere_meio					# se for menor, vai para a funcao de inserir entre 2 nodos
 		jr $ra
-		
-insere_meio:
-		sw $t6, 8($t8)
-		sw $t8, 0($t6)
-		sw $t4, 8($t6)
+			
+insere_meio:										# quando a insercao precisa ser feita entre dois nodos 
+		sw $t6, 8($t8)								# o nodo anterior recebe como proximo o novo nodo
+		sw $t8, 0($t6)								# o novo nodo recebe o nodo anterior
+		sw $t4, 8($t6)								# o novo nodo recebe proximo nodo
 		sw $t6, 0($t4)
 		jr $ra	
 		
-insere_fim:
-		sw $t6, 8($t8)
-		sw $t8, 0($t6)
-		jr $ra
+insere_fim:											# insercao no final da lista, se o valor a ser inserido é maior que o ultimo valor na lista
+		sw $t6, 8($t8) 								# o antigo ultimo nodo recebe como proximo o novo nodo
+		sw $t8, 0($t6)								# o novo nodo recebe como anterior o antigo ultimo nodo
+		jr $ra	
 		
 ##################################################
 # Exclui um item na lista duplamente encadeada	 #
