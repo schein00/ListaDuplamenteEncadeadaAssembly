@@ -97,6 +97,16 @@ op_insere:
 		syscall
 		j   mostra_menu		
 op_excluii:
+
+		la	$a0, txt_valor
+		syscall		
+		li	$v0, 5	#pq 5?		
+		syscall
+		add $t1,$zero,$v0  #valor para remover
+		add $t0,$zero,$s0  #inicio da lista
+				
+		bne $s1,$zero,excluir_i	#verificasealistaévazia
+		j mostra_menu
 #		la	$a0, txt_valor
 #		syscall		
 #		li	$v0, 5	#pq 5?		
@@ -266,60 +276,71 @@ excluir_i:
 #		 		lw $t8,0($t7)
 #		  		addi $t9,$t9,1
 #			j laco
-#		beq $t9,$a1, remover_ele
-		j mostra_menu
+#	beq $t9,$a1, remover_ele
 
+		add $t4,$zero, $s0 							#inicia a lista
+		addi $t2,$zero,0 							#inicializa contador
+		valor_indice:								#loop onde transformo o indice em valor
+			slt $t5,$t2,$t1
+			beq $t5,$zero,exit_indice					#se for igual a zero chamada do exit_indice			
+			lw $t3, 4($t4)							#carrega o valor
+			lw $t4, 8($t4)							#passa para o proximo nodo
+			addi $t2,$t2,1							#incrementa
+		j valor_indice 
+		
 
-##################################################
+exit_indice:										#passa  pra t1 o valor 
+		add $t1,$zero,$t3							#chama o excluir por valor
+		j excluir_v	
 # Exclui um item na lista duplamente encadeada	 #		
 #	por indice									 #
 ##################################################
 
 excluir_v:
-		add $t4,$zero, $s0
-		lw $t3, 4($t0)
-		beq $t1, $t3, excluir_incio
-		bne $t1, $t3, delete
+		add $t4,$zero, $s0     							#inicio da lista
+		lw $t3, 4($t0) 								#carrea valor
+		beq $t1, $t3, excluir_incio					 	#se  elemento é o inicio
+		bne $t1, $t3, delete							#senao delete  na lista de n elementos loop para passagem de parametro
 		j mostra_menu
 	
-excluir_incio:
-		lw $t4, 8($s0)
-		add $s0, $zero, $t4
-		add $t5, $zero, 1
+excluir_incio:     	
+		lw $t4, 8($s0)  							#carrega right
+		add $s0, $zero, $t4 							#aponta pra null
+		add $t5, $zero, 1							#incrementa
 		subu $s1, $s1, $t5
 		j mostra_menu
 		
 delete:
-		beq $t4, $zero, delete_erro
-		add $t8, $zero, $t4
-		lw $t4, 8($t4)
-		lw $t3, 4($t4)
-		beq $t1, $t3, deletar_ele
-		bne $t1, $t3, delete
+		beq $t4, $zero, delete_erro 						#lista vazia chamada de função  que imprime erro
+		add $t8, $zero, $t4							#inicio da lista
+		lw $t4, 8($t4)								#nodo adiante (anda)
+		lw $t3, 4($t4)								#carrega valor
+		beq $t1, $t3, deletar_ele 						# Se valor é igual
+		bne $t1, $t3, delete 							#senão volta ao loop
 		j mostra_menu
 		
-deletar_ele:
-		lw $t3, 8($t4)
+deletar_ele:										#escolhe entre deletar no meio
+		lw $t3, 8($t4)								#carrega endereço do proximo
 		
-		beq $t3, $zero, delete_fim
-		bne $t3, $zero, delete_meio
+		beq $t3, $zero, delete_fim						#Se right é null delete fim
+		bne $t3, $zero, delete_meio						#senão delete meio
 		j mostra_menu
 		
-delete_fim:
-		sw $zero, 8($t8)
-		add $t5, $zero, 1
-		subu $s1, $s1, $t5
+delete_fim:										#função delete fim, o ultimo nodo é o elementoa excluir
+		sw $zero, 8($t8)							#free no left
+		add $t5, $zero, 1							#incrementa
+		subu $s1, $s1, $t5							
 		j mostra_menu
 		
-delete_meio:
-		lw $t5, 8($t4)
+delete_meio:										#função delete meio elemento a excluir esta entre duas licações
+		lw $t5, 8($t4)								#troca de ponteiros  entre sucessor e anterior
 		sw $t8, 0($t5)
 		sw $t5, 8($t8)
-		add $t5, $zero, 1
+		add $t5, $zero, 1							#incrementa
 		subu $s1, $s1, $t5
 		j mostra_menu
 		
-delete_erro:
+delete_erro:										#Imprime se lista esta vazia
 		la $a0, txt_delete_erro
 		li $v0, 4
 		syscall;
