@@ -93,15 +93,26 @@ op_insere:
 		syscall
 		j   mostra_menu		
 op_excluii:
+		la	$a0, txt_valor
+		syscall		
+		li	$v0, 5	#pq 5?		
+		syscall
+		add $a1,$zero,$v0  #valorpararemover
+		add $a2,$zero,$s0  #inicio da lista
+		sw $s2, ($t9)
+				
+		bne $t9,$zero,excluir_i	#verificasealistaévazia
 		j mostra_menu		
 op_excluiv: 
 		la	$a0, txt_valor
 		syscall		
 		li	$v0, 5	#pq 5?		
 		syscall
-		add $a1,$zero,$a0  #valorpararemover
-		add $a0,$zero,$s0  #inicio da lista
-		bne $s2,$zero,excluir_v	#verificasealistaévazia
+		add $a1,$zero,$v0  #valorpararemover
+		add $a2,$zero,$s0  #inicio da lista
+		sw $s2, ($t9)
+				
+		bne $t9,$zero,excluir_v	#verificasealistaévazia
 		j mostra_menu
 		
 op_mostrar:
@@ -217,28 +228,49 @@ insere_fim:
 #	por valor 									 #		
 ##################################################
 excluir_i:
+		la	$a0, txt_inicioele
+		li   $v0, 4
+		syscall
+		addi $t9,$zero,1				
+		beq $t9,$a1,remove_inicio
+		add $t9,$t9,$zero #inicia o contador
+		lw $t8,($a2)
+		laco: slt $t4,$t9,$a1
+				beq $t4,$zero,exit_lacoR	 #senão fimdelaço
+		  		lw $t5,0($t8) 
+		  		lw $t6,4($t8)
+		  		lw $t7,8($t8)
+		 		lw $t8,($t7)
+		  		addi $t9,$t9,1
+			j laco
+		beq $t9,$a1, remover_ele
 		j mostra_menu
+
 
 ##################################################
 # Exclui um item na lista duplamente encadeada	 #		
 #	por indice									 #
 ##################################################
-excluir_v:		
-		lw $t8,4($a0) #valor do primeiro elemento
+excluir_v:
+		la	$a0, txt_inicioele
+		li   $v0, 4
+		syscall	
+		lw $t8,4($a2) #valor do primeiro elemento
+		
 		beq $t8,$a1, remove_inicio #verifica se o primeiro elemento é igual ao valor a ser removido
 		add $t9,$t9,$zero #inicia o contador
-		lw $t8,(a0) #passa o inicio da lista
+		lw $t8,($a2) #passa o inicio da lista
 			jump: slt $t4,$t9,$s2  #inicio do laço se i<total de inserção
-				beq $t4, $zero , exit_lacoR	 #senão fimdelaço
-		  		lw $t5,0($t8) 
+				beq $t4, $zero , exit_lacoR #senão fimdelaço
+		  		lw $t5,0($t8)
 		  		lw $t6, 4($t8)
 		  		lw $t7,8($t8)
 		 		beq $t6,$a1, remover_ele
 		 		lw $t8,($t7)
 		  		addi $t9,$t9,1
 			j jump
-		j mostra_menu
-exit_laco:
+		j mostra_menu	
+exit_lacoR:
 	j mostra_menu
 
 remover_ele:
@@ -268,30 +300,38 @@ remover_ult:
 
 
 remove_inicio:
-		lw $t9,8($t8) #endereco do proximo
-		beq $t9,$zero,remove_inicio_1Elemento #verifica se é o unico elemento da lista 
+		la	$a0, txt_inicioele
+		li   $v0, 4
+		syscall
+		
+		lw $t3,8($a2) #endereco do proximo
+		
+		beq $t3,$zero,remove_inicio_1Elemento #verifica se é o unico elemento da lista 
 		jal remove_inicio_nElemento
 
 
 		j mostra_menu
 
 remove_inicio_1Elemento:
-		lw $t8,0($a0) #ponteiro que aponta para o inicio
-		sw $zero,0($t8) #free no left
-		sw $zero,($a0) #atualiza o inicio da lista
+		la	$a0, txt_inicioele
+		li   $v0, 4
+		syscall
+		lw $t8,0($a2) #ponteiro que aponta para o inicio
+		li $t8,0
+		li $s0,0
+		
 		addi $t2,$t2,1 #incrementa 1
  		sub $s2,$s2,$t2 #decrementa no contador de inserções
- 		sw $s2,($s2)  #salva
-
+ 	  
  		j mostra_menu
 
 remove_inicio_nElemento:
- 		lw $t8, 8($a0) #
+ 		lw $t8, 8($a2) #
  		lw $t9, 0($t8) #left do proximo nodo
  		sw $a0,($t9) #inicio da lista
  		sw $zero,0($t8) #
  		sw $zero,8($t8)
- 		sw $t9,($a0) #
+ 		sw $t9,($a2) #
  		addi $t2,$t2,1 #incrementa 1
  		sub $s2,$s2,$t2 #decrementa no contador de inserções
  		sw $s2,($s2)
