@@ -26,7 +26,7 @@ txt_espaco: 	.asciiz		" "
 txt_posicao:	.asciiz     	"Posicao Inserida: "
 txt_vremovido:	.asciiz		"Valor Removido: "
 txt_iremovido:	.asciiz		"Indice Removido: "
-marcador:		.asciiz		"entro"	
+
 
 		.text	
 main:	
@@ -114,18 +114,14 @@ op_mostrar:
 ##################################################
 # Mosta a lista duplamente encadeada ordenada	 #		
 ##################################################		
-mostrar_lista:
-		add $t0, $zero, $a0	# copia posição do inicio da lista
-		bne $t0, $zero, segue_mostra
-		addi $v0, $zero, -1		  # retorna -1
-		jr  $ra
-		
 segue_mostra:
+		li $v0, 4
 		la	$a0, txt_lista
 		syscall
 		
+		
 laco_mostra:
-		lw $a0, 4 ($t0)
+		lw $a0, 4($t0)
 		li $v0, 1
 		syscall
 		
@@ -133,26 +129,25 @@ laco_mostra:
 		li $v0, 4
 		syscall		
 		
-		lw $t0, 0 ($t0)
+		lw $t0, 8($t0)
 		bne $t0, $zero, laco_mostra
-		jal mostra_menu
+		jr $ra
+
+mostrar_lista:
+		add $t0, $zero, $a0						# copia posição do inicio da lista
+		bne $t0, $zero, segue_mostra			# se a lista nao for vazia imprime a lista
+		beq $t0, $zero, imprime_lista_vazia		# se a lista estiver vazia informa
+		addi $v0, $zero, -1		  				# retorna -1
+		jr  $ra
+		
+imprime_lista_vazia:
+		li $v0, 4
+		la	$a0, txt_vazia
+		syscall
+		jr $ra
+
 ###################################
 # fim funcao mostrar lista
-		
-		
-imprime_indice_nao_encontrado:		
-		la	 $a0, txt_ind_inex
-		li   $v0, 4
-		syscall
-		j    mostra_menu		
-		add  $t0, $zero, $v0 
-		li	 $v0, 4			
-		la	 $a0, txt_vremovido
-		syscall	
-		add  $a0, $zero, $t0		
-		li	 $v0, 1			
-		syscall		
-		j   mostra_menu
 
 
 		
