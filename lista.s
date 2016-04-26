@@ -366,12 +366,6 @@ remove_inicio_nElemento:
 		
 
 
-		
-##################################################
-# Nostra totais da lista duplamente encadeada	 #		
-##################################################
-mostrar_totais:
-		j mostra_menu
-		
+
 
 
